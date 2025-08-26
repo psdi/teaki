@@ -15,7 +15,8 @@ $request = Laminas\Diactoros\ServerRequestFactory::fromGlobals(
 );
 
 $router = (require_once 'config/routes.php')(new League\Route\Router);
-$strategy = new League\Route\Strategy\ApplicationStrategy;
+$responseFactory = new Laminas\Diactoros\ResponseFactory;
+$strategy = new League\Route\Strategy\JsonStrategy($responseFactory);
 $strategy->setContainer($container);
 $router->setStrategy($strategy);
 $response = $router->dispatch($request);

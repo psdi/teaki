@@ -13,7 +13,11 @@ class AggregateMapper
         $aggregate->setName($set['name']);
         $aggregate->setTypeId((int) $set['type_id']);
         $aggregate->setAlias($set['alias']);
-        $aggregate->setHarvestYear((int) $set['harvest_year']);
+        $aggregate->setHarvestYear(
+            is_numeric($set['harvest_year'])
+                ? (int) $set['harvest_year']
+                : null
+        );
         $aggregate->setIsAvailable((bool) $set['is_available']);
         $aggregate->setVendor($set['vendor']);
         $aggregate->setOrigin($set['origin']);

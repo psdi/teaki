@@ -3,10 +3,10 @@
 namespace TeaTracker;
 
 use Laminas\Diactoros\Response\JsonResponse;
+use League\Route\Http\Exception\NotFoundException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use TeaTracker\AggregateMapper;
 use TeaTracker\Entity\TeaAggregate;
 use TeaTracker\Persistence\TeaAggregateDao;
 
@@ -27,7 +27,7 @@ class GetTeasRequestHandler implements RequestHandlerInterface
             ? $this->teaAggrDao->fetch($teaId)
             : $this->teaAggrDao->fetchAll();
         if ($data instanceof TeaAggregate && is_null($data->getId())) {
-            $data = new \stdClass;
+            throw new NotFoundException;
         }
         return new JsonResponse($data);
     }

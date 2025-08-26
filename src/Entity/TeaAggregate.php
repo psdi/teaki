@@ -58,7 +58,7 @@ class TeaAggregate implements \JsonSerializable
         return $this->harvestYear;
     }
 
-    public function setHarvestYear(int $harvestYear): void
+    public function setHarvestYear(?int $harvestYear): void
     {
         $this->harvestYear = $harvestYear;
     }
