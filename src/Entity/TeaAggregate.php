@@ -22,6 +22,8 @@ class TeaAggregate implements \JsonSerializable
     private $alias;
     /** @var int */
     private $amount;
+    /** @var string */
+    private $remarks;
 
     public function getId(): ?int
     {
@@ -111,6 +113,16 @@ class TeaAggregate implements \JsonSerializable
     public function setAmount(int $amount): void
     {
         $this->amount = $amount;
+    }
+
+    public function getRemarks(): ?string
+    {
+        return $this->remarks;
+    }
+
+    public function setRemarks(?string $remarks): void
+    {
+        $this->remarks = $remarks;
     }
 
     public function jsonSerialize(): array

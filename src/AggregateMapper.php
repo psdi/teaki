@@ -22,6 +22,7 @@ class AggregateMapper
         $aggregate->setVendor($set['vendor']);
         $aggregate->setOrigin($set['origin']);
         $aggregate->setAmount((int) $set['amount']);
+        $aggregate->setRemarks($set['remarks']);
         return $aggregate;
     }
 }
