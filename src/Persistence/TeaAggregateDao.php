@@ -1,15 +1,12 @@
 <?php
 
-namespace TeaTracker\Persistence;
+namespace Teaki\Persistence;
 
-use TeaTracker\Entity\TeaAggregate;
-use TeaTracker\AggregateMapper;
+use Teaki\Entity\TeaAggregate;
+use Teaki\AggregateMapper;
 
-class TeaAggregateDao
+class TeaAggregateDao extends AbstractDao
 {
-    /** @var \PDO */
-    private $conn;
-
     private const BASE_QUERY = <<<QUERY
         SELECT t.id AS id, n.`value` AS `name`, ty.id AS type_id, l.value AS origin,
             t.harvest_year, t.is_available, t.amount_in_grams AS amount,
@@ -17,14 +14,9 @@ class TeaAggregateDao
         FROM tea t
         INNER JOIN `type` ty ON t.type_id = ty.id
         INNER JOIN `name` n ON t.name_id = n.id
-        INNER JOIN `location` l ON t.origin = l.id
+        INNER JOIN `location` l ON t.origin_id = l.id
         INNER JOIN `vendor` v ON t.vendor_id = v.id
 QUERY;
-
-    public function __construct(\PDO $conn)
-    {
-        $this->conn = $conn;
-    }
 
     public function fetch(int $teaId): TeaAggregate
     {

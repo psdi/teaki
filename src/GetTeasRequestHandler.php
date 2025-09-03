@@ -1,14 +1,14 @@
 <?php
 
-namespace TeaTracker;
+namespace Teaki;
 
 use Laminas\Diactoros\Response\JsonResponse;
 use League\Route\Http\Exception\NotFoundException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use TeaTracker\Entity\TeaAggregate;
-use TeaTracker\Persistence\TeaAggregateDao;
+use Teaki\Entity\TeaAggregate;
+use Teaki\Persistence\TeaAggregateDao;
 
 class GetTeasRequestHandler implements RequestHandlerInterface
 {

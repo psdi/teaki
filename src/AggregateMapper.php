@@ -1,8 +1,8 @@
 <?php
 
-namespace TeaTracker;
+namespace Teaki;
 
-use TeaTracker\Entity\TeaAggregate;
+use Teaki\Entity\TeaAggregate;
 
 class AggregateMapper
 {

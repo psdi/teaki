@@ -2,7 +2,7 @@
     "name": "psdi/tea-tracker",
     "autoload": {
         "psr-4": {
-            "TeaTracker\\": "src/"
+            "Teaki\\": "src/"
         }
     },
     "require": {
