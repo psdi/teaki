@@ -3,6 +3,7 @@
 namespace Teaki\Mapper;
 
 use Teaki\Entity\Tea;
+use Teaki\Persistence\TeaDao;
 
 class TeaMapper
 {
@@ -16,7 +17,13 @@ class TeaMapper
         $tea->setVendorId((int) $set['vendorId']);
         $tea->setAmount((int) $set['amount']);
         $tea->setIsAvailable((bool) $set['isAvailable']);
-        $tea->setRemarks($set['remarks'] ?? null);
+
+        $remarks = $set['remarks'] ?? null;
+        if (is_string($remarks) && strlen($remarks) > TeaDao::REMARKS_MAX_LENGTH) {
+            $remarks = substr($remarks, 0, TeaDao::REMARKS_MAX_LENGTH);
+        }
+        $tea->setRemarks($remarks);
+
         $tea->setHarvestYear(
             isset($set['harvestYear'])
                 ? (int) $set['harvestYear']

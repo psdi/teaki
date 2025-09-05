@@ -2,7 +2,7 @@
 
 namespace Teaki\Entity;
 
-class Name
+class Name implements \JsonSerializable
 {
     /** @var int|null */
     private $id;
@@ -39,5 +39,10 @@ class Name
     public function setAlias(?string $alias): void
     {
         $this->alias = $alias;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
     }
 }

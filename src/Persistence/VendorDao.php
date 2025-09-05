@@ -3,9 +3,19 @@
 namespace Teaki\Persistence;
 
 use Teaki\Entity\Vendor;
+use Teaki\Mapper\VendorMapper;
 
 class VendorDao extends AbstractDao
 {
+    public function fetchAll(): array
+    {
+        $query = 'SELECT * FROM `vendor`';
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $vendors = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return \array_map([VendorMapper::class, 'map'], $vendors);
+    }
+
     public function create(Vendor $vendor, bool $returnId = false): ?int
     {
         $command = 'INSERT INTO `vendor` (`value`, `location_id`) VALUES (:value, :location_id)';

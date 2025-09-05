@@ -2,7 +2,7 @@
 
 namespace Teaki\Entity;
 
-class Location
+class Location implements \JsonSerializable
 {
     /** @var int|null */
     private $id;
@@ -27,5 +27,10 @@ class Location
     public function setValue(string $value): void
     {
         $this->value = $value;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Teaki\Entity;
 
-class Vendor
+class Vendor implements \JsonSerializable
 {
     /** @var int|null */
     private $id;
@@ -39,5 +39,10 @@ class Vendor
     public function setLocationId(?int $locationId): void
     {
         $this->locationId = $locationId;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return get_object_vars($this);
     }
 }

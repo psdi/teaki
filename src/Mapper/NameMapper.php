@@ -11,7 +11,7 @@ class NameMapper
         $name = new Name;
         $name->setId($set['id'] ?? null);
         $name->setValue($set['value']);
-        $name->setAlias($set['alias']);
+        $name->setAlias($set['alias'] ?? null);
         return $name;
     }
 }

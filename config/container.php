@@ -1,13 +1,9 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use Teaki\GetTeasRequestHandler;
-use Teaki\Persistence\LocationDao;
-use Teaki\Persistence\NameDao;
-use Teaki\Persistence\TeaAggregateDao;
-use Teaki\Persistence\TeaDao;
-use Teaki\Persistence\VendorDao;
-use Teaki\SaveTeaRequestHandler;
+use Teaki\{GetTeasRequestHandler, SaveTeaRequestHandler};
+use Teaki\{LocationsController, NamesController, VendorsController};
+use Teaki\Persistence\{LocationDao, NameDao, TeaAggregateDao, TeaDao, VendorDao};
 use function DI\factory;
 
 return [
@@ -59,5 +55,20 @@ return [
         $locationDao = $container->get(LocationDao::class);
         $teaDao = $container->get(TeaDao::class);
         return new SaveTeaRequestHandler($nameDao, $vendorDao, $locationDao, $teaDao);
+    },
+
+    LocationsController::class => function (ContainerInterface $container) {
+        $locationDao = $container->get(LocationDao::class);
+        return new LocationsController($locationDao);
+    },
+
+    NamesController::class => function (ContainerInterface $container) {
+        $nameDao = $container->get(NameDao::class);
+        return new NamesController($nameDao);
+    },
+
+    VendorsController::class => function (ContainerInterface $container) {
+        $vendorDao = $container->get(VendorDao::class);
+        return new VendorsController($vendorDao);
     },
 ];

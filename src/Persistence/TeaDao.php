@@ -6,6 +6,8 @@ use Teaki\Entity\Tea;
 
 class TeaDAO extends AbstractDao
 {
+    public static const REMARKS_MAX_LENGTH = 150;
+
     public function create(Tea $tea, bool $returnId = false): ?bool
     {
         $command = <<<COMMAND
