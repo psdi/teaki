@@ -3,7 +3,7 @@
 namespace Teaki\Persistence;
 
 use Teaki\Entity\TeaAggregate;
-use Teaki\AggregateMapper;
+use Teaki\Mapper\AggregateMapper;
 
 class TeaAggregateDao extends AbstractDao
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Teaki;
+namespace Teaki\Mapper;
 
 use Teaki\Entity\TeaAggregate;
 

@@ -6,14 +6,8 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Teaki\Mapper\LocationMapper;
-use Teaki\Mapper\NameMapper;
-use Teaki\Mapper\TeaMapper;
-use Teaki\Mapper\VendorMapper;
-use Teaki\Persistence\LocationDao;
-use Teaki\Persistence\NameDao;
-use Teaki\Persistence\TeaDao;
-use Teaki\Persistence\VendorDao;
+use Teaki\Mapper\{LocationMapper, NameMapper, TeaMapper, VendorMapper};
+use Teaki\Persistence\{LocationDao, NameDao, TeaDao, VendorDao};
 
 class SaveTeaRequestHandler implements RequestHandlerInterface
 {
@@ -37,8 +31,15 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $params = json_decode($request->getBody()->getContents(), true);
+        $params = \array_map(
+            function (mixed $val) {
+                return $val === '' ? null : $val;
+            },
+            $params
+        );
+
         $nameId = $params['nameId'] ?? false;
-        if ($nameId === false && array_key_exists('name', $params)) {
+        if (empty($nameId) && array_key_exists('name', $params)) {
             $name = NameMapper::map([
                 'value' => $params['name'],
                 'alias' => $params['alias'],
@@ -47,7 +48,7 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
         }
 
         $vendorId = $params['vendorId'] ?? false;
-        if ($vendorId === false && array_key_exists('vendor', $params)) {
+        if (empty($vendorId) && array_key_exists('vendor', $params)) {
             $vendor = VendorMapper::map([
                 'value' => $params['vendor'],
             ]);
@@ -55,14 +56,14 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
         }
 
         $originId = $params['originId'] ?? false;
-        if ($originId === false && array_key_exists('origin', $params)) {
+        if (empty($originId) && array_key_exists('origin', $params)) {
             $origin = LocationMapper::map([
                 'value' => $params['origin'],
             ]);
             $originId = $this->locationDao->create($origin, true);
         }
 
-        $params = array_merge(
+        $params = \array_merge(
             $params,
             [
                 'nameId' => $nameId,
@@ -71,7 +72,7 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
             ]
         );
         $tea = TeaMapper::map($params);
-        $this->teaDao->create($tea);
-        return new JsonResponse([], 201);
+        $teaId = $this->teaDao->create($tea, true);
+        return new JsonResponse(['teaId' => $teaId], 201);
     }
 }

@@ -25,7 +25,7 @@ class TeaMapper
         $tea->setRemarks($remarks);
 
         $tea->setHarvestYear(
-            isset($set['harvestYear'])
+            !empty($set['harvestYear'])
                 ? (int) $set['harvestYear']
                 : null
         );

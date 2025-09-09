@@ -6,9 +6,9 @@ use Teaki\Entity\Tea;
 
 class TeaDAO extends AbstractDao
 {
-    public static const REMARKS_MAX_LENGTH = 150;
+    public const REMARKS_MAX_LENGTH = 150;
 
-    public function create(Tea $tea, bool $returnId = false): ?bool
+    public function create(Tea $tea, bool $returnId = false): mixed
     {
         $command = <<<COMMAND
             INSERT INTO `tea` (`name_id`, `type_id`, `origin_id`, `vendor_id`,
