@@ -19,7 +19,8 @@ class LocationsController
 
     public function get(ServerRequestInterface $request): ResponseInterface
     {
-        $locations = $this->locationDao->fetchAll();
+        $sort = explode(',', $request->getQueryParams()['sort'] ?? '');
+        $locations = $this->locationDao->orderBy(...$sort)->fetchAll();
         return new JsonResponse($locations);
     }
 }

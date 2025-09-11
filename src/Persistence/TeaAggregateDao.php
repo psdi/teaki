@@ -7,7 +7,7 @@ use Teaki\Mapper\AggregateMapper;
 
 class TeaAggregateDao extends AbstractDao
 {
-    private const BASE_QUERY = <<<QUERY
+    protected const BASE_QUERY = <<<QUERY
         SELECT t.id AS id, n.`value` AS `name`, ty.id AS type_id, l.value AS origin,
             t.harvest_year, t.is_available, t.amount_in_grams AS amount,
             n.`alias`, v.value AS vendor, t.remarks
@@ -17,23 +17,28 @@ class TeaAggregateDao extends AbstractDao
         INNER JOIN `location` l ON t.origin_id = l.id
         INNER JOIN `vendor` v ON t.vendor_id = v.id
 QUERY;
+    protected const FIELD_MAP = [
+        'id' => 't.id',
+        'name' => 'n.`value`',
+    ];
 
-    public function fetch(int $teaId): TeaAggregate
+    public function fetch(int $teaId): ?TeaAggregate
     {
         $query = self::BASE_QUERY . ' WHERE t.id = :id';
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $teaId);
         $stmt->execute();
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
-        // Return empty object if fetch returns false (empty set)
+        // Fetch returns false if no results are returned
         return is_array($result)
             ? AggregateMapper::map($result)
-            : new TeaAggregate;
+            : null;
     }
 
     public function fetchAll(): array
     {
-        $stmt = $this->conn->prepare(self::BASE_QUERY);
+        $query = $this->buildQuery();
+        $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return array_map([AggregateMapper::class, 'map'], $result);

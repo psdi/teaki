@@ -23,10 +23,14 @@ class GetTeasRequestHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $teaId = $request->getAttribute("teaId");
-        $data = $teaId !== null
-            ? $this->teaAggrDao->fetch($teaId)
-            : $this->teaAggrDao->fetchAll();
-        if ($data instanceof TeaAggregate && is_null($data->getId())) {
+        if ($teaId !== null) {
+            $data = $this->teaAggrDao->fetch($teaId);
+        } else {
+            $sort = explode(',', $request->getQueryParams()['sort'] ?? '');
+            $data = $this->teaAggrDao->orderBy(...$sort)->fetchAll();
+        }
+
+        if ($data === null) {
             throw new NotFoundException;
         }
         return new JsonResponse($data);

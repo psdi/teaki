@@ -22,7 +22,8 @@ class NamesController
 
     public function get(ServerRequestInterface $request): ResponseInterface
     {
-        $names = $this->nameDao->fetchAll();
+        $sort = explode(',', $request->getQueryParams()['sort'] ?? '');
+        $names = $this->nameDao->orderBy(...$sort)->fetchAll();
         return new JsonResponse($names);
     }
 }

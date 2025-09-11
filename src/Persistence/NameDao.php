@@ -7,11 +7,16 @@ use Teaki\Mapper\NameMapper;
 
 class NameDao extends AbstractDao
 {
+    protected const BASE_QUERY = 'SELECT * FROM `name`';
+    protected const FIELD_MAP = [
+        'id' => 'id',
+        'value' => '`value`',
+    ];
     private $base = 'SELECT {{fields}} from `name`';
 
     public function select(array $fields): NameDao
     {
-        $this->base = \str_replace(
+        $this->base = str_replace(
             '{{fields}}',
             implode(', ', $fields),
             $this->base
@@ -21,14 +26,11 @@ class NameDao extends AbstractDao
 
     public function fetchAll(): array
     {
-        $query = $this->base;
-        if (\str_contains($query, '{{fields}}')) {
-            $query = \str_replace('{{fields}}', '*', $query);
-        }
+        $query = $this->buildQuery();
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $names = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return \array_map([NameMapper::class, 'map'], $names);
+        return array_map([NameMapper::class, 'map'], $names);
     }
 
     public function create(Name $name, bool $returnId = false): ?int

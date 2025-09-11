@@ -7,9 +7,15 @@ use Teaki\Mapper\LocationMapper;
 
 class LocationDao extends AbstractDao
 {
+    protected const BASE_QUERY = 'SELECT * FROM `location`';
+    protected const FIELD_MAP = [
+        'id' => 'id',
+        'value' => '`value`',
+    ];
+
     public function fetchAll(): array
     {
-        $query = 'SELECT * FROM `location`';
+        $query = $this->buildQuery();
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $locations = $stmt->fetchAll(\PDO::FETCH_ASSOC);

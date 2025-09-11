@@ -19,7 +19,8 @@ class VendorsController
 
     public function get(ServerRequestInterface $request): ResponseInterface
     {
-        $vendors = $this->vendorDao->fetchAll();
+        $sort = explode(',', $request->getQueryParams()['sort'] ?? '');
+        $vendors = $this->vendorDao->orderBy(...$sort)->fetchAll();
         return new JsonResponse($vendors);
     }
 }

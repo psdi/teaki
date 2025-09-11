@@ -7,9 +7,15 @@ use Teaki\Mapper\VendorMapper;
 
 class VendorDao extends AbstractDao
 {
+    protected const BASE_QUERY = 'SELECT * FROM `vendor`';
+    protected const FIELD_MAP = [
+        'id' => 'id',
+        'value' => '`value`',
+    ];
+
     public function fetchAll(): array
     {
-        $query = 'SELECT * FROM `vendor`';
+        $query = $this->buildQuery();
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $vendors = $stmt->fetchAll(\PDO::FETCH_ASSOC);
