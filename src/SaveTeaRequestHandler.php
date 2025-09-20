@@ -30,48 +30,48 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $params = json_decode($request->getBody()->getContents(), true);
-        $params = \array_map(
+        $body = $request->getParsedBody();
+        $body = array_map(
             function (mixed $val) {
                 return $val === '' ? null : $val;
             },
-            $params
+            $body
         );
 
-        $nameId = $params['nameId'] ?? false;
-        if (empty($nameId) && array_key_exists('name', $params)) {
+        $nameId = $body['nameId'] ?? false;
+        if (empty($nameId) && array_key_exists('name', $body)) {
             $name = NameMapper::map([
-                'value' => $params['name'],
-                'alias' => $params['alias'],
+                'value' => $body['name'],
+                'alias' => $body['alias'],
             ]);
             $nameId = $this->nameDao->create($name, true);
         }
 
-        $vendorId = $params['vendorId'] ?? false;
-        if (empty($vendorId) && array_key_exists('vendor', $params)) {
+        $vendorId = $body['vendorId'] ?? false;
+        if (empty($vendorId) && array_key_exists('vendor', $body)) {
             $vendor = VendorMapper::map([
-                'value' => $params['vendor'],
+                'value' => $body['vendor'],
             ]);
             $vendorId = $this->vendorDao->create($vendor, true);
         }
 
-        $originId = $params['originId'] ?? false;
-        if (empty($originId) && array_key_exists('origin', $params)) {
+        $originId = $body['originId'] ?? false;
+        if (empty($originId) && array_key_exists('origin', $body)) {
             $origin = LocationMapper::map([
-                'value' => $params['origin'],
+                'value' => $body['origin'],
             ]);
             $originId = $this->locationDao->create($origin, true);
         }
 
-        $params = \array_merge(
-            $params,
+        $body = \array_merge(
+            $body,
             [
                 'nameId' => $nameId,
                 'vendorId' => $vendorId,
                 'originId' => $originId,
             ]
         );
-        $tea = TeaMapper::map($params);
+        $tea = TeaMapper::map($body);
         $teaId = $this->teaDao->create($tea, true);
         return new JsonResponse(['teaId' => $teaId], 201);
     }
