@@ -11,7 +11,7 @@ return function (Router $router) {
         ->post('/teas[/]', Teaki\SaveTeaRequestHandler::class)
         ->middleware(new JsonParserMiddleware);
     $router
-        ->put('/teas[/]', Teaki\EditTeaRequestHandler::class)
+        ->put('/teas/{teaId:number}[/]', Teaki\SaveTeaRequestHandler::class)
         ->middleware(new JsonParserMiddleware);
 
     $router->get('/names[/]', [Teaki\NamesController::class, 'get']);

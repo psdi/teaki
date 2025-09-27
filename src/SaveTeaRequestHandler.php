@@ -3,30 +3,22 @@
 namespace Teaki;
 
 use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Teaki\Entity\Tea;
 use Teaki\Mapper\{LocationMapper, NameMapper, TeaMapper, VendorMapper};
 use Teaki\Persistence\{LocationDao, NameDao, TeaDao, VendorDao};
 
 class SaveTeaRequestHandler implements RequestHandlerInterface
 {
-    /** @var NameDao */
-    private $nameDao;
-    /** @var VendorDao */
-    private $vendorDao;
-    /** @var LocationDao */
-    private $locationDao;
-    /** @var TeaDao */
-    private $teaDao;
-
-    public function __construct(NameDao $nameDao, VendorDao $vendorDao, LocationDao $locationDao, TeaDao $teaDao)
-    {
-        $this->nameDao = $nameDao;
-        $this->vendorDao = $vendorDao;
-        $this->locationDao = $locationDao;
-        $this->teaDao = $teaDao;
-    }
+    public function __construct(
+        private NameDao $nameDao,
+        private VendorDao $vendorDao,
+        private LocationDao $locationDao,
+        private TeaDao $teaDao,
+    ) {}
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -37,6 +29,7 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
             },
             $body
         );
+        $teaId = $request->getAttribute('teaId');
 
         $nameId = $body['nameId'] ?? false;
         if (empty($nameId) && array_key_exists('name', $body)) {
@@ -63,6 +56,12 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
             $originId = $this->locationDao->create($origin, true);
         }
 
+        if (!$nameId || !$vendorId || !$originId) {
+            return new JsonResponse([
+                'message' => 'Invalid request body'
+            ], 400);
+        }
+
         $body = \array_merge(
             $body,
             [
@@ -72,7 +71,46 @@ class SaveTeaRequestHandler implements RequestHandlerInterface
             ]
         );
         $tea = TeaMapper::map($body);
-        $teaId = $this->teaDao->create($tea, true);
-        return new JsonResponse(['teaId' => $teaId], 201);
+
+        if ($teaId) {
+            $tea->setId($teaId);
+            $response = $this->handleUpdate($tea);
+        } else {
+            $response = $this->handleInsert($tea);
+        }
+        return $response;
+    }
+
+    private function handleUpdate(Tea $tea)
+    {
+        try {
+            $isSuccess = $this->teaDao->update($tea);
+            $statusCode = $isSuccess ? 200 : 404;
+        } catch (\PDOException $e) {
+            $statusCode = 500;
+        }
+
+        $response = new JsonResponse([]);
+        $response = $response->withStatus($statusCode);
+        return $response;
+    }
+
+    private function handleInsert(Tea $tea)
+    {
+        $teaId = null;
+        try {
+            $teaId = $this->teaDao->create($tea, true);
+            $statusCode = 201;
+        } catch (\PDOException $e) {
+            $statusCode = 500;
+        }
+
+        $response = new JsonResponse([], $statusCode);
+        if ($teaId) {
+            $response = $response->withPayload([
+                'teaId' => $teaId,
+            ]);
+        }
+        return $response;
     }
 }

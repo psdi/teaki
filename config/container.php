@@ -1,7 +1,7 @@
 <?php
 
 use Psr\Container\ContainerInterface;
-use Teaki\{EditTeaRequestHandler, GetTeasRequestHandler, SaveTeaRequestHandler};
+use Teaki\{GetTeasRequestHandler, SaveTeaRequestHandler};
 use Teaki\{LocationsController, NamesController, VendorsController};
 use Teaki\Persistence\{LocationDao, NameDao, TeaAggregateDao, TeaDao, VendorDao};
 use function DI\factory;
@@ -55,11 +55,6 @@ return [
         $locationDao = $container->get(LocationDao::class);
         $teaDao = $container->get(TeaDao::class);
         return new SaveTeaRequestHandler($nameDao, $vendorDao, $locationDao, $teaDao);
-    },
-
-    EditTeaRequestHandler::class => function (ContainerInterface $container) {
-        $teaDao = $container->get(TeaDao::class);
-        return new EditTeaRequestHandler($teaDao);
     },
 
     LocationsController::class => function (ContainerInterface $container) {
